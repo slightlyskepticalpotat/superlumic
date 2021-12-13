@@ -1,3 +1,3 @@
 superlumic:
 	g++ *.hpp
-	g++ *.cpp
+	g++ *.cpp -o superlumic

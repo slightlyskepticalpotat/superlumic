@@ -32,4 +32,6 @@
 *.app
 
 # Testing files
+.vscode
 passwords.txt
+superlumic
