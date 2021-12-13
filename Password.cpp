@@ -3,16 +3,20 @@
 
 using namespace std;
 
-Password::Password(string newService, string newPassword, string newNotes) {
+Password::Password(string newService, string newUsername, string newPassword, string newNotes) {
     service = newService;
+    username = newUsername;
     password = newPassword;
     notes = newNotes;
-    created = time(NULL);
-    modified = time(NULL);
+    edited = time(NULL);
 }
 
 string Password::getService() {
     return service;
+}
+
+string Password::getUsername() {
+    return username;
 }
 
 string Password::getPassword() {
@@ -23,25 +27,26 @@ string Password::getNotes() {
     return notes;
 }
 
-time_t Password::getCreated() {
-    return created;
-}
-
-time_t Password::getModified() {
-    return modified;
+time_t Password::getEdited() {
+    return edited;
 }
 
 void Password::setService(string newService) {
     service = newService;
-    modified = time(NULL);
+    edited = time(NULL);
+}
+
+void Password::setUsername(string newUsername) {
+    password = newUsername;
+    edited = time(NULL);
 }
 
 void Password::setPassword(string newPassword) {
     password = newPassword;
-    modified = time(NULL);
+    edited = time(NULL);
 }
 
 void Password::setNotes(string newNotes) {
     notes = newNotes;
-    modified = time(NULL);
+    edited = time(NULL);
 }

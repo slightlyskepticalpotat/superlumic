@@ -6,18 +6,19 @@
 class Password {
     private:
         std::string service;
+        std::string username;
         std::string password;
         std::string notes;
-        time_t created;
-        time_t modified;
+        time_t edited;
     public:
-        Password(std::string newService, std::string newPassword, std::string newNotes);
+        Password(std::string newService, std::string newUsername, std::string newPassword, std::string newNotes);
         std::string getService();
+        std::string getUsername();
         std::string getPassword();
         std::string getNotes();
-        time_t getCreated();
-        time_t getModified();
+        time_t getEdited();
         void setService(std::string newService);
+        void setUsername(std::string setUsername);
         void setPassword(std::string newPassword);
         void setNotes(std::string newNotes);
 };
