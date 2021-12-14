@@ -9,14 +9,12 @@ class Password {
         std::string username;
         std::string password;
         std::string notes;
-        time_t edited;
     public:
         Password(std::string newService, std::string newUsername, std::string newPassword, std::string newNotes);
         std::string getService();
         std::string getUsername();
         std::string getPassword();
         std::string getNotes();
-        time_t getEdited();
         void setService(std::string newService);
         void setUsername(std::string setUsername);
         void setPassword(std::string newPassword);

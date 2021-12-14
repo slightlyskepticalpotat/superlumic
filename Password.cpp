@@ -8,7 +8,6 @@ Password::Password(string newService, string newUsername, string newPassword, st
     username = newUsername;
     password = newPassword;
     notes = newNotes;
-    edited = time(NULL);
 }
 
 string Password::getService() {
@@ -27,26 +26,18 @@ string Password::getNotes() {
     return notes;
 }
 
-time_t Password::getEdited() {
-    return edited;
-}
-
 void Password::setService(string newService) {
     service = newService;
-    edited = time(NULL);
 }
 
 void Password::setUsername(string newUsername) {
     password = newUsername;
-    edited = time(NULL);
 }
 
 void Password::setPassword(string newPassword) {
     password = newPassword;
-    edited = time(NULL);
 }
 
 void Password::setNotes(string newNotes) {
     notes = newNotes;
-    edited = time(NULL);
 }
