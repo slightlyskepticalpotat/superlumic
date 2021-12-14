@@ -1,6 +1,6 @@
-// Use CTR and AES-128
+// Use CTR and AES-256
 #define CTR 1
-#define AES128 1
+#define AES256 1
 
 // Include needed headers
 #include "Password.hpp"
@@ -30,12 +30,12 @@ int main(int argc, char *argv[]) {
     string signature;
     vector<Password> passwords;
     int choice3;
-    uint8_t key[16] = {};
+    uint8_t key[32] = {};
     uint8_t iv[16];
     char buffer;
 
     // todo: implement proper hkdf
-    cout << "Password (max 16 characters):\n";
+    cout << "Password (max 32 characters)\n> ";
     cin >> key;
     struct AES_ctx ctx;
 
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
             }
             infile.get(buffer);
             AES_init_ctx_iv(&ctx, key, iv);
+
             // Decrypt the password file
             while (getline(infile, service)) {
                 getline(infile, username);
@@ -68,7 +69,11 @@ int main(int argc, char *argv[]) {
     }
     // Sets new random iv
     uniform_int_distribution<char> dist(0, 255);
-    random_device urandom("/dev/urandom");
+    #ifdef WINDOWS
+        random_device urandom("rand_s");
+    #else
+        random_device urandom("/dev/urandom");
+    #endif
     for (int i = 0; i < 16; i++) {
         iv[i] = dist(urandom);
     }
@@ -76,61 +81,64 @@ int main(int argc, char *argv[]) {
 
     // Main program loop
     while (true) {
-        // List each individual password
+        // List all individual passwords
         cout << "--------------------------------------------------------------------------------\n";
         for (int i = 0; i < passwords.size(); i++) {
             cout << "Number: " << i << "\n";
-            cout << "Service: " << passwords[i].getService() << "\n";
-            cout << "Username: " << passwords[i].getUsername() << "\n";
-            cout << "Password: " << passwords[i].getPassword() << "\n";
+            cout << "Service: " << passwords[i].getService() << " | " << "Username: " << passwords[i].getUsername() << " | " << "Password: " << passwords[i].getPassword() << "\n";
             cout << "Notes: " << passwords[i].getNotes() << "\n";
             // time_t edited = passwords[i].getEdited();
             // cout << "Edited: " << put_time(localtime(&edited), "%Y-%m-%d %H:%M:%S") << "\n";
-            // time_t created = passwords[i].getCreated();
-            // cout << "Created: " << put_time(localtime(&created), "%Y-%m-%d %H:%M:%S") << "\n";
             cout << "--------------------------------------------------------------------------------\n";
         }
-        cout << "[E]dit, [S]ave, [Q]uit:\n";
+        cout << "[E]dit, [S]ave, [Q]uit\n> ";
         cin >> choice1;
         transform(choice1.begin(), choice1.end(), choice1.begin(), ::tolower);
 
         // Standard CRUD operations
         if (choice1 == "e") {
-            cout << "[C]reate, [M]odify, [D]elete:\n";
+            cout << "[C]reate, [R]ead, [U]pdate, [D]elete\n> ";
             cin >> choice2;
             transform(choice2.begin(), choice2.end(), choice2.begin(), ::tolower);
             if (choice2 == "c") {
-                cout << "Service:\n";
-                cin >> service;
-                cout << "Username:\n";
-                cin >> username;
-                cout << "Password:\n";
-                cin >> password;
-                cout << "Notes:\n";
-                cin >> notes;
+                cout << "Service\n> ";
+                getline(cin >> ws, service);
+                cout << "Username\n> ";
+                getline(cin >> ws, username);
+                cout << "Password\n> ";
+                getline(cin >> ws, password);
+                cout << "Notes\n> ";
+                getline(cin >> ws, notes);
                 passwords.push_back(Password(service, username, password, notes));
                 cout << "Password created\n";
-            } else if (choice2 == "m") {
-                cout << "Number:\n";
+            } else if (choice2 == "u") {
+                // Multi-platform screen clear
+                #ifdef WINDOWS
+                    system("cls");
+                #else
+                    system("clear");
+                #endif
+            } else if (choice2 == "u") {
+                cout << "Number\n> ";
                 cin >> choice3;
-                cout << "[S]ervice, [U]sername, [P]assword, [N]otes:\n";
+                cout << "[S]ervice, [U]sername, [P]assword, [N]otes\n> ";
                 cin >> choice4;
                 transform(choice4.begin(), choice4.end(), choice4.begin(), ::tolower);
                 if (choice4 == "s" || choice4 == "u" || choice4 == "p" || choice4 == "n") {
                     if (choice4 == "s") {
-                        cout << "Service:\n";
+                        cout << "Service\n> ";
                         cin >> service;
                         passwords[choice3].setService(service);
                     } else if (choice4 == "u") {
-                        cout << "Username:\n";
+                        cout << "Username\n> ";
                         cin >> username;
                         passwords[choice3].setUsername(username);
                     } else if (choice4 == "p") {
-                        cout << "Password:\n";
+                        cout << "Password\n> ";
                         cin >> password;
                         passwords[choice3].setPassword(password);
                     } else if (choice4 == "n") {
-                        cout << "Notes:\n";
+                        cout << "Notes\n> ";
                         cin >> notes;
                         passwords[choice3].setNotes(notes);
                     }
@@ -139,7 +147,7 @@ int main(int argc, char *argv[]) {
                     cout << "Invalid operation\n";
                 }
             } else if (choice2 == "d") {
-                cout << "Number:\n";
+                cout << "Number\n> ";
                 cin >> choice3;
                 passwords.erase(passwords.begin() + choice3);
                 cout << "Password deleted\n";
@@ -147,7 +155,7 @@ int main(int argc, char *argv[]) {
                 cout << "Invalid operation\n";
             }
         } else if (choice1 == "s") {
-            cout << "Password file name:\n";
+            cout << "Password file name\n> ";
             cin >> choice2;
             ofstream outfile(choice2);
             // Store IV for next use
@@ -156,12 +164,10 @@ int main(int argc, char *argv[]) {
                 outfile << iv[i];
             }
             outfile << "\n";
+
             // Encrypt saved passwords
             for (auto password: passwords) {
-                outfile << aes_ctr(password.getService(), ctx) << "\n";
-                outfile << aes_ctr(password.getUsername(), ctx) << "\n";
-                outfile << aes_ctr(password.getPassword(), ctx) << "\n";
-                outfile << aes_ctr(password.getNotes(), ctx) << "\n";
+                outfile << aes_ctr(password.getService(), ctx) << "\n" << aes_ctr(password.getUsername(), ctx) << "\n" << aes_ctr(password.getPassword(), ctx) << "\n" << aes_ctr(password.getNotes(), ctx) << "\n";
             }
             outfile.close();
             cout << "Password file saved\n";
