@@ -22,14 +22,14 @@ string aes_ctr(string plaintext, AES_ctx ctx) {
 int main(int argc, char *argv[]) {
     string choice1;
     string choice2;
-    string choice4;
+    string choice3;
     string service;
     string username;
     string password;
     string notes;
     string signature;
     vector<Password> passwords;
-    int choice3;
+    int number;
     uint8_t key[32] = {};
     uint8_t iv[16];
     char buffer;
@@ -79,7 +79,6 @@ int main(int argc, char *argv[]) {
     }
     AES_init_ctx_iv(&ctx, key, iv);
 
-    // Main program loop
     while (true) {
         // List all individual passwords
         cout << "--------------------------------------------------------------------------------\n";
@@ -97,7 +96,7 @@ int main(int argc, char *argv[]) {
 
         // Standard CRUD operations
         if (choice1 == "e") {
-            cout << "[C]reate, [R]ead, [U]pdate, [D]elete\n> ";
+            cout << "[C]reate, [R]ead, [U]pdate, [D]elete, [S]hift\n> ";
             cin >> choice2;
             transform(choice2.begin(), choice2.end(), choice2.begin(), ::tolower);
             if (choice2 == "c") {
@@ -120,27 +119,27 @@ int main(int argc, char *argv[]) {
                 #endif
             } else if (choice2 == "u") {
                 cout << "Number\n> ";
-                cin >> choice3;
+                cin >> number;
                 cout << "[S]ervice, [U]sername, [P]assword, [N]otes\n> ";
-                cin >> choice4;
-                transform(choice4.begin(), choice4.end(), choice4.begin(), ::tolower);
-                if (choice4 == "s" || choice4 == "u" || choice4 == "p" || choice4 == "n") {
-                    if (choice4 == "s") {
+                cin >> choice3;
+                transform(choice3.begin(), choice3.end(), choice3.begin(), ::tolower);
+                if (choice3 == "s" || choice3 == "u" || choice3 == "p" || choice3 == "n") {
+                    if (choice3 == "s") {
                         cout << "Service\n> ";
                         cin >> service;
-                        passwords[choice3].setService(service);
-                    } else if (choice4 == "u") {
+                        passwords[number].setService(service);
+                    } else if (choice3 == "u") {
                         cout << "Username\n> ";
                         cin >> username;
-                        passwords[choice3].setUsername(username);
-                    } else if (choice4 == "p") {
+                        passwords[number].setUsername(username);
+                    } else if (choice3 == "p") {
                         cout << "Password\n> ";
                         cin >> password;
-                        passwords[choice3].setPassword(password);
-                    } else if (choice4 == "n") {
+                        passwords[number].setPassword(password);
+                    } else if (choice3 == "n") {
                         cout << "Notes\n> ";
                         cin >> notes;
-                        passwords[choice3].setNotes(notes);
+                        passwords[number].setNotes(notes);
                     }
                     cout << "Password modified\n";
                 } else {
@@ -148,9 +147,29 @@ int main(int argc, char *argv[]) {
                 }
             } else if (choice2 == "d") {
                 cout << "Number\n> ";
-                cin >> choice3;
-                passwords.erase(passwords.begin() + choice3);
+                cin >> number;
+                passwords.erase(passwords.begin() + number);
                 cout << "Password deleted\n";
+            } else if (choice2 == "s") {
+                cout << "Number\n> ";
+                cin >> number;
+                cout << "[U]p, [D]own\n> ";
+                cin >> choice3;
+                transform(choice3.begin(), choice3.end(), choice3.begin(), ::tolower);
+                if (choice3 == "u" || choice3 == "d") {
+                    if (choice3 == "u") {
+                        if (&passwords[number] != &passwords.front()) {
+                            swap(passwords[number], passwords[number - 1]);
+                        }
+                    } else if (choice3 == "d") {
+                        if (&passwords[number] != &passwords.back()) {
+                            swap(passwords[number], passwords[number + 1]);
+                        }
+                    }
+                    cout << "Password shifted";
+                } else {
+                    cout << "Invalid operation\n";
+                }
             } else {
                 cout << "Invalid operation\n";
             }
