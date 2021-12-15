@@ -1,8 +1,8 @@
-// Use CTR and AES-256
+// use CTR and AES-256
 #define CTR 1
 #define AES256 1
 
-// Include needed headers
+// include needed headers
 #include "Password.hpp"
 #include "tiny-AES-c/aes.hpp"
 #include "tiny-AES-c/aes.c"
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// Encryption and decryption helper
+// encryption and decryption helper
 string aes_ctr(string plaintext, AES_ctx ctx) {
     vector<uint8_t> buffer;
     buffer.resize(plaintext.size());
@@ -20,6 +20,12 @@ string aes_ctr(string plaintext, AES_ctx ctx) {
 }
 
 int main(int argc, char *argv[]) {
+    // override to implement --help
+    if ((argc == 2) && !strcmp(argv[1], "--help")) {
+        cout << "Usage: ./superlumic [password file]\n";
+        return 0;
+    }
+
     string choice1;
     string choice2;
     string choice3;
@@ -39,14 +45,14 @@ int main(int argc, char *argv[]) {
     cin >> key;
     struct AES_ctx ctx;
 
-    // Load save if present
+    // load save if present
     if (argc < 2) {
         cout << "Creating new password file\n";
     } else {
         ifstream infile(argv[1]);
         getline(infile, signature);
         if (signature == "fhcreyhzvp") {
-            // Get IV and restore AES
+            // get IV and restore AES
             for (int i = 0; i < 16; i++) {
                 infile.get(buffer);
                 iv[i] = buffer;
@@ -54,7 +60,7 @@ int main(int argc, char *argv[]) {
             infile.get(buffer);
             AES_init_ctx_iv(&ctx, key, iv);
 
-            // Decrypt the password file
+            // decrypt the password file
             while (getline(infile, service)) {
                 getline(infile, username);
                 getline(infile, password);
@@ -67,7 +73,7 @@ int main(int argc, char *argv[]) {
         }
         infile.close();
     }
-    // Sets new random iv
+    // sets new random iv
     uniform_int_distribution<char> dist(0, 255);
     #ifdef WINDOWS
         random_device urandom("rand_s");
@@ -80,7 +86,7 @@ int main(int argc, char *argv[]) {
     AES_init_ctx_iv(&ctx, key, iv);
 
     while (true) {
-        // List all individual passwords
+        // list all individual passwords
         cout << "--------------------------------------------------------------------------------\n";
         for (int i = 0; i < passwords.size(); i++) {
             cout << "Number: " << i << "\n";
@@ -94,7 +100,7 @@ int main(int argc, char *argv[]) {
         cin >> choice1;
         transform(choice1.begin(), choice1.end(), choice1.begin(), ::tolower);
 
-        // Standard CRUD operations
+        // standard CRUD operations
         if (choice1 == "e") {
             cout << "[C]reate, [R]ead, [U]pdate, [D]elete, [S]hift\n> ";
             cin >> choice2;
@@ -111,7 +117,7 @@ int main(int argc, char *argv[]) {
                 passwords.push_back(Password(service, username, password, notes));
                 cout << "Password created\n";
             } else if (choice2 == "u") {
-                // Multi-platform screen clear
+                // multi-platform screen clear
                 #ifdef WINDOWS
                     system("cls");
                 #else
@@ -177,14 +183,14 @@ int main(int argc, char *argv[]) {
             cout << "Password file name\n> ";
             cin >> choice2;
             ofstream outfile(choice2);
-            // Store IV for next use
+            // store IV for next use
             outfile << "fhcreyhzvp\n";
             for (int i = 0; i < 16; i++) {
                 outfile << iv[i];
             }
             outfile << "\n";
 
-            // Encrypt saved passwords
+            // encrypt saved passwords
             for (auto password: passwords) {
                 outfile << aes_ctr(password.getService(), ctx) << "\n" << aes_ctr(password.getUsername(), ctx) << "\n" << aes_ctr(password.getPassword(), ctx) << "\n" << aes_ctr(password.getNotes(), ctx) << "\n";
             }
