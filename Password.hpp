@@ -5,20 +5,23 @@
 
 class Password {
     private:
+        std::string type;
         std::string service;
         std::string username;
         std::string password;
-        std::string notes;
+        std::string note;
     public:
-        Password(std::string newService, std::string newUsername, std::string newPassword, std::string newNotes);
+        Password(std::string newType, std::string newService, std::string newUsername, std::string newPassword, std::string newNote);
+        std::string getType();
         std::string getService();
         std::string getUsername();
         std::string getPassword();
-        std::string getNotes();
+        std::string getNote();
+        void setType(std::string newType);
         void setService(std::string newService);
         void setUsername(std::string setUsername);
         void setPassword(std::string newPassword);
-        void setNotes(std::string newNotes);
+        void setNote(std::string newNote);
 };
 
 #endif

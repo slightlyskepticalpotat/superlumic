@@ -29,10 +29,11 @@ int main(int argc, char *argv[]) {
     string choice1;
     string choice2;
     string choice3;
+    string type;
     string service;
     string username;
     string password;
-    string notes;
+    string note;
     string signature;
     vector<Password> passwords;
     int number;
@@ -61,11 +62,12 @@ int main(int argc, char *argv[]) {
             AES_init_ctx_iv(&ctx, key, iv);
 
             // decrypt the password file
-            while (getline(infile, service)) {
+            while (getline(infile, type)) {
+                getline(infile, service);
                 getline(infile, username);
                 getline(infile, password);
-                getline(infile, notes);
-                passwords.push_back(Password(aes_ctr(service, ctx), aes_ctr(username, ctx), aes_ctr(password, ctx), aes_ctr(notes,ctx)));
+                getline(infile, note);
+                passwords.push_back(Password(aes_ctr(type, ctx), aes_ctr(service, ctx), aes_ctr(username, ctx), aes_ctr(password, ctx), aes_ctr(note,ctx)));
             }
             cout << "Password file loaded\n";
         } else {
@@ -88,10 +90,10 @@ int main(int argc, char *argv[]) {
     while (true) {
         // list all individual passwords
         cout << "--------------------------------------------------------------------------------\n";
-        for (int i = 0; i < passwords.size(); i++) {
+        for (int i = 0; i < (int) passwords.size(); i++) {
             cout << "Number: " << i << "\n";
             cout << "Service: " << passwords[i].getService() << " | " << "Username: " << passwords[i].getUsername() << " | " << "Password: " << passwords[i].getPassword() << "\n";
-            cout << "Notes: " << passwords[i].getNotes() << "\n";
+            cout << "Note: " << passwords[i].getNote() << "\n";
             // time_t edited = passwords[i].getEdited();
             // cout << "Edited: " << put_time(localtime(&edited), "%Y-%m-%d %H:%M:%S") << "\n";
             cout << "--------------------------------------------------------------------------------\n";
@@ -112,9 +114,9 @@ int main(int argc, char *argv[]) {
                 getline(cin >> ws, username);
                 cout << "Password\n> ";
                 getline(cin >> ws, password);
-                cout << "Notes\n> ";
-                getline(cin >> ws, notes);
-                passwords.push_back(Password(service, username, password, notes));
+                cout << "Note\n> ";
+                getline(cin >> ws, note);
+                passwords.push_back(Password("Password", service, username, password, note));
                 cout << "Password created\n";
             } else if (choice2 == "u") {
                 // multi-platform screen clear
@@ -126,7 +128,7 @@ int main(int argc, char *argv[]) {
             } else if (choice2 == "u") {
                 cout << "Number\n> ";
                 cin >> number;
-                cout << "[S]ervice, [U]sername, [P]assword, [N]otes\n> ";
+                cout << "[S]ervice, [U]sername, [P]assword, [N]ote\n> ";
                 cin >> choice3;
                 transform(choice3.begin(), choice3.end(), choice3.begin(), ::tolower);
                 if (choice3 == "s" || choice3 == "u" || choice3 == "p" || choice3 == "n") {
@@ -143,9 +145,9 @@ int main(int argc, char *argv[]) {
                         cin >> password;
                         passwords[number].setPassword(password);
                     } else if (choice3 == "n") {
-                        cout << "Notes\n> ";
-                        cin >> notes;
-                        passwords[number].setNotes(notes);
+                        cout << "Note\n> ";
+                        cin >> note;
+                        passwords[number].setNote(note);
                     }
                     cout << "Password modified\n";
                 } else {
@@ -192,7 +194,7 @@ int main(int argc, char *argv[]) {
 
             // encrypt saved passwords
             for (auto password: passwords) {
-                outfile << aes_ctr(password.getService(), ctx) << "\n" << aes_ctr(password.getUsername(), ctx) << "\n" << aes_ctr(password.getPassword(), ctx) << "\n" << aes_ctr(password.getNotes(), ctx) << "\n";
+                outfile << aes_ctr(password.getType(), ctx) << "\n" << aes_ctr(password.getService(), ctx) << "\n" << aes_ctr(password.getUsername(), ctx) << "\n" << aes_ctr(password.getPassword(), ctx) << "\n" << aes_ctr(password.getNote(), ctx) << "\n";
             }
             outfile.close();
             cout << "Password file saved\n";

@@ -3,11 +3,17 @@
 
 using namespace std;
 
-Password::Password(string newService, string newUsername, string newPassword, string newNotes) {
+Password::Password(string newType, string newService, string newUsername, string newPassword, string newNote) {
+    // type not currently exposed
+    type = newType;
     service = newService;
     username = newUsername;
     password = newPassword;
-    notes = newNotes;
+    note = newNote;
+}
+
+string Password::getType() {
+    return type;
 }
 
 string Password::getService() {
@@ -22,8 +28,12 @@ string Password::getPassword() {
     return password;
 }
 
-string Password::getNotes() {
-    return notes;
+string Password::getNote() {
+    return note;
+}
+
+void Password::setType(string newType) {
+    type = newType;
 }
 
 void Password::setService(string newService) {
@@ -38,6 +48,6 @@ void Password::setPassword(string newPassword) {
     password = newPassword;
 }
 
-void Password::setNotes(string newNotes) {
-    notes = newNotes;
+void Password::setNote(string newNote) {
+    note = newNote;
 }
