@@ -4,8 +4,8 @@
 
 // Include needed headers
 #include "Password.hpp"
-#include "tiny-AES-c-master/aes.hpp"
-#include "tiny-AES-c-master/aes.c"
+#include "tiny-AES-c/aes.hpp"
+#include "tiny-AES-c/aes.c"
 #include <bits/stdc++.h>
 
 using namespace std;
