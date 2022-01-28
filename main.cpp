@@ -6,7 +6,12 @@
 #include "Password.hpp"
 #include "tiny-AES-c/aes.hpp"
 #include "tiny-AES-c/aes.c"
-#include <bits/stdc++.h>
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <random>
+#include <vector>
 
 using namespace std;
 

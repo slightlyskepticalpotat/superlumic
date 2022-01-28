@@ -1,7 +1,7 @@
 #ifndef PASSWORD_HPP
 #define PASSWORD_HPP
 
-#include <bits/stdc++.h>
+#include <string>
 
 class Password {
     private:
