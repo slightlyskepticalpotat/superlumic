@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
             // cout << "Edited: " << put_time(localtime(&edited), "%Y-%m-%d %H:%M:%S") << "\n";
             cout << "--------------------------------------------------------------------------------\n";
         }
-        cout << "[E]dit, [S]ave, [Q]uit\n> ";
+        cout << "[E]dit, [S]ave, [D]ump, [Q]uit\n> ";
         cin >> choice1;
         transform(choice1.begin(), choice1.end(), choice1.begin(), ::tolower);
 
@@ -203,6 +203,18 @@ int main(int argc, char *argv[]) {
             }
             outfile.close();
             cout << "Password file saved\n";
+        } else if (choice1 == "d") {
+            // dump to csv
+            cout << "Password file name\n> ";
+            cin >> choice2;
+            ofstream outfile(choice2);
+            outfile << "service,username,password\n";
+            for (auto password: passwords) {
+                outfile << password.getService() << "," << password.getUsername() << "," << password.getPassword() << "\n";
+            }
+            outfile.close();
+            cout << "Password file saved\n";
+            cout << "Private data in file\n";
         } else if (choice1 == "q") {
             return 0;
         } else {
