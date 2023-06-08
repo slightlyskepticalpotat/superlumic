@@ -13,3 +13,19 @@ $ ./superlumic --help
 Usage: ./superlumic [password file]
 $ ./superlumic
 ```
+
+## Security
+The makefile specifies the same flags that Hardened Gentoo uses. Below are some of the compiler instructions:
+```
+Position Independent Executable: yes
+Stack protected: yes
+Read-only relocations: yes
+Immediate binding: yes
+Control flow integrity: yes
+```
+
+The build process should also be reasonably deterministic. On `g++ (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0`:
+```shell
+$ sha256sum superlumic
+acb377edf969f0014e708de94d50f4c16551a10f6c9b300ee7a12c493a6e2399  superlumic
+```

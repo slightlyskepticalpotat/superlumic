@@ -128,7 +128,9 @@ int main(int argc, char *argv[]) {
                 #ifdef WINDOWS
                     system("cls");
                 #else
-                    system("clear");
+                    if (system("clear") == -1) {
+                        cout << "Clear screen failed";
+                    }
                 #endif
             } else if (choice2 == "u") {
                 cout << "Number\n> ";
