@@ -1,5 +1,5 @@
-CFLAGS=-fPIE -fstack-protector-all -D_FORTIFY_SOURCE=2 -fdebug-prefix-map=OLD=NEW -O3 -Wall
-LDFLAGS=-Wl,-z,now -Wl,-z,relro
+CFLAGS=-fPIE -fstack-protector-all -D_FORTIFY_SOURCE=2 -fdebug-prefix-map=OLD=NEW -O3 -Wall -fpermissive
+LDFLAGS=-Wl,-z,now -Wl,-z,relro,-lssl,-lcrypto
 
 superlumic:
 	g++ *.hpp

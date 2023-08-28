@@ -1,5 +1,5 @@
 # superlumic
-A performant, secure, and cross-platform command-line password manager. Implemented in [C++](https://en.wikipedia.org/wiki/C%2B%2B) and [C](https://en.wikipedia.org/wiki/C_(programming_language)) with [tiny-AES-c](https://github.com/kokke/tiny-AES-c), superlumic allows you to create, save, dump (to csv), and load encrypted password lists. Once loaded, you can create, read, update, delete, and reorder the passwords in each password list. The lists themselves are later encrypted with AES-256 (CTR mode) and a user-provided password.
+A performant, secure, and cross-platform command-line password manager. Implemented in [C++](https://en.wikipedia.org/wiki/C%2B%2B) and [C](https://en.wikipedia.org/wiki/C_(programming_language)) with [tiny-AES-c](https://github.com/kokke/tiny-AES-c), superlumic allows you to create, save, dump (to csv), and load encrypted password lists. Once loaded, you can create, read, update, delete, and reorder the passwords in each password list. The lists themselves are later encrypted with AES-256 (CTR mode) and a user-provided password which is run through HKDF.
 
 ## Usage
 An example encrypted password file can be found at [encrypted.txt](encrypted.txt). The password is `password`.
@@ -27,5 +27,5 @@ Control flow integrity: yes
 The build process should also be reasonably deterministic. On `g++ (Ubuntu 11.3.0-1ubuntu1~22.04.1) 11.3.0`:
 ```shell
 $ sha256sum superlumic
-acb377edf969f0014e708de94d50f4c16551a10f6c9b300ee7a12c493a6e2399  superlumic
+7e03e6395074482e9eeb221389e2d2e95ee25e7ff85990587622fa06a1120359  superlumic
 ```

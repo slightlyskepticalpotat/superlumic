@@ -7,6 +7,11 @@
 #include "tiny-AES-c/aes.hpp"
 #include "tiny-AES-c/aes.c"
 
+// include openssl headers
+#include <openssl/evp.h>
+#include <openssl/kdf.h>
+#include <openssl/params.h>
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -42,14 +47,34 @@ int main(int argc, char *argv[]) {
     string signature;
     vector<Password> passwords;
     int number;
-    uint8_t key[32] = {};
+    string raw_key;
     uint8_t iv[16];
     char buffer;
 
-    // todo: implement proper hkdf
-    cout << "Password (max 32 characters)\n> ";
-    cin >> key;
+    cout << "Password\n> ";
+    cin >> raw_key;
     struct AES_ctx ctx;
+
+    // implemented hkdf with openssl
+    EVP_KDF *kdf;
+    EVP_KDF_CTX *kctx;
+    uint8_t key[32] = {};
+    OSSL_PARAM params[5], *p = params;
+
+    kdf = EVP_KDF_fetch(NULL, "HKDF", NULL);
+    kctx = EVP_KDF_CTX_new(kdf);
+    EVP_KDF_free(kdf);
+    *p++ = OSSL_PARAM_construct_utf8_string("digest", SN_sha256, strlen(SN_sha256));
+    *p++ = OSSL_PARAM_construct_octet_string("key", raw_key.c_str(), (size_t) raw_key.size());
+    *p++ = OSSL_PARAM_construct_octet_string("info", "superlumic", (size_t) 10);
+    *p++ = OSSL_PARAM_construct_octet_string("salt", "salty", (size_t) 5);
+    *p = OSSL_PARAM_construct_end();
+
+    // actually derive the key
+    if (EVP_KDF_derive(kctx, key, sizeof(key), params) <= 0) {
+        perror("EVP_KDF_derive");
+    }
+    EVP_KDF_CTX_free(kctx);
 
     // load save if present
     if (argc < 2) {
